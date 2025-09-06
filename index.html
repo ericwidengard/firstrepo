@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Firebase App (core) -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js"></script>
+    <!-- Firestore (for leaderboard) -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Football Quiz</title>
@@ -202,6 +206,19 @@
         </div>
     </div>
     <script>
+        const firebaseConfig = {
+        apiKey: "AIzaSyC7MckNS8W0_M69NRrZhSipLDvmTPOVqk8",
+        authDomain: "football-quiz-e461f.firebaseapp.com",
+        projectId: "football-quiz-e461f",
+        storageBucket: "football-quiz-e461f.firebasestorage.app",
+        messagingSenderId: "119338076289",
+        appId: "1:119338076289:web:659706f5ea359599d7e580",
+        measurementId: "G-QL447LCMFQ"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
         const quizData = [
             {
                 question: "Which country has won the most FIFA World Cups?",
