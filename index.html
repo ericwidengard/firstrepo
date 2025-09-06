@@ -1,376 +1,298 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <!-- Firebase App (core) -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <!-- Firestore (for leaderboard) -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Football Quiz</title>
-    <style>
-        body {
-            font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
-            background: #181c24;
-            color: #f5f6fa;
-            min-height: 100vh;
-            margin: 0;
-            position: relative;
-            overflow: hidden;
-        }
-        .stadium-bg {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: url('images/camp_nou.jpeg') center center/cover no-repeat;
-            opacity: 0.22;
-            z-index: 0;
-            filter: blur(2px) grayscale(10%);
-        }
-        .player-img {
-            position: fixed;
-            z-index: 1;
-            opacity: 0.65;
-            filter: drop-shadow(0 8px 32px #222) grayscale(10%);
-            pointer-events: none;
-        }
-        .messi {
-            bottom: 5vh;
-            left: 5vw;
-            width: 120px;
-            height: auto;
-        }
-        .cruyff {
-            top: 8vh;
-            right: 7vw;
-            width: 110px;
-            height: auto;
-        }
-        .container.modern {
-            background: rgba(24, 28, 36, 0.92);
-            padding: 2.5rem 3.5rem;
-            border-radius: 24px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.45);
-            text-align: center;
-            position: relative;
-            z-index: 2;
-            margin: 7vh auto 0 auto;
-            max-width: 420px;
-            opacity: 0;
-            transform: translateY(40px);
-            animation: fadeInUp 1.2s cubic-bezier(.77,0,.175,1) 0.2s forwards;
-        }
-        @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        .title-row {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 1rem;
-            margin-bottom: 0.5rem;
-        }
-        .football-icon {
-            width: 44px;
-            height: 44px;
-            vertical-align: middle;
-        }
-        button {
-            background: linear-gradient(90deg, #ffcc00 60%, #ffb300 100%);
-            color: #181c24;
-            border: none;
-            padding: 0.75rem 2rem;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            cursor: pointer;
-            margin-top: 1.5rem;
-            transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
-            box-shadow: 0 2px 8px rgba(44,44,44,0.12);
-            position: relative;
-            overflow: hidden;
-        }
-        button:active {
-            transform: scale(0.96);
-        }
-        button::after {
-            content: "";
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            width: 0;
-            height: 0;
-            background: rgba(255,255,255,0.3);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            transition: width 0.3s, height 0.3s;
-            z-index: 0;
-        }
-        button:active::after {
-            width: 120%;
-            height: 120%;
-        }
-        h1 {
-            margin-bottom: 1rem;
-            font-size: 2.1rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-            color: #ffcc00;
-            text-shadow: 0 2px 8px #222;
-        }
-        .trivia {
-            margin-top: 1rem;
-            font-style: italic;
-            color: #ffe066;
-            font-size: 1.1rem;
-        }
-        .score {
-            margin-top: 1rem;
-            font-weight: bold;
-            font-size: 1.1rem;
-            color: #ffcc00;
-        }
-        #choices {
-            margin-top: 1.2rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.7rem;
-        }
-        .choiceBtn {
-            background: linear-gradient(90deg, #ffcc00 60%, #ffb300 100%);
-            color: #181c24;
-            border: none;
-            padding: 0.7rem 1.5rem;
-            border-radius: 8px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background 0.2s, color 0.2s;
-            box-shadow: 0 2px 8px rgba(44,44,44,0.12);
-        }
-        .choiceBtn:hover:not(:disabled) {
-            background: linear-gradient(90deg, #ffe066 60%, #ffd700 100%);
-            color: #222;
-        }
-        #nextBtn {
-            margin-top: 1.5rem;
-            background: #2a5298;
-            color: #fff;
-            border: none;
-            padding: 0.7rem 2rem;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        #nextBtn:hover {
-            background: #1e3c72;
-        }
-        #end {
-            text-align: center;
-        }
-        @media (max-width: 700px) {
-            .container.modern {
-                padding: 1.2rem 0.5rem;
-                max-width: 98vw;
-            }
-            h1 {
-                font-size: 1.3rem;
-            }
-            .messi, .cruyff {
-                width: 70px;
-            }
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Football Quiz — Camp Nou</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{--accent:#ffd166;--muted:rgba(255,255,255,0.85)}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,Arial,sans-serif}
+    body{background:#000;overflow:auto}
+    .bg{position:fixed;inset:0;background-image:url('images/camp_nou.jpeg');background-size:cover;background-position:center;filter:brightness(0.45) saturate(0.95);z-index:-2}
+    .bg::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg, rgba(2,6,23,0.25), rgba(2,6,23,0.6));}
+    .app{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:48px}
+  .panel{width:min(980px,94%);display:grid;grid-template-columns:1fr 340px;gap:24px}
+  .panel.no-leader{grid-template-columns:1fr}
+
+    /* Question card */
+    .card-quiz{background:rgba(255,255,255,0.03);border-radius:16px;padding:24px;color:var(--muted);backdrop-filter:blur(6px);box-shadow:0 12px 40px rgba(2,6,23,0.6);transform:translateY(20px);opacity:0;animation:popIn .6s forwards}
+    @keyframes popIn{to{transform:none;opacity:1}}
+    .title{display:flex;align-items:center;gap:12px}
+    .title h1{margin:0;font-size:24px}
+    .subtitle{margin:6px 0 0;color:rgba(230,238,248,0.85)}
+    .username-row{display:flex;gap:12px;align-items:center;margin-top:12px}
+    input[type=text]{flex:1;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);color:var(--muted)}
+    .btn{background:var(--accent);border:none;padding:10px 14px;border-radius:10px;font-weight:700;cursor:pointer}
+
+    .question-card{margin-top:18px}
+    .question{font-size:20px;margin:0 0 12px}
+    .choices{display:grid;gap:10px}
+    .choice{padding:12px;border-radius:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03);cursor:pointer;transition:transform .12s,background .12s}
+    .choice:hover{transform:translateY(-4px)}
+
+    /* leaderboard */
+    .card-leader{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;padding:18px;color:var(--muted);backdrop-filter:blur(4px)}
+    .leader-list{list-style:none;padding:0;margin:0;max-height:62vh;overflow:auto}
+    .leader-list li{display:flex;justify-content:space-between;padding:8px 6px;border-bottom:1px dashed rgba(255,255,255,0.03);font-weight:600}
+
+    /* end screen */
+    .end{display:none;padding:18px;text-align:center}
+
+    canvas#confetti{position:fixed;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:999}
+
+    @media(max-width:880px){.panel{grid-template-columns:1fr}.card-quiz{order:2}.card-leader{order:1}}
+  </style>
 </head>
 <body>
-    <div class="stadium-bg"></div>
-    <canvas id="confetti" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:99;display:none;"></canvas>
-    <div class="container modern">
-        <div class="title-row">
-            <h1>Football Quiz</h1>
+  <div class="bg" aria-hidden="true"></div>
+  <div class="app">
+    <div class="panel">
+      <div class="card-quiz" id="card-quiz">
+        <div class="title">
+          <h1>Football Quiz ⚽</h1>
+          <div style="margin-left:auto;color:rgba(255,255,255,0.6)" id="score">Score: 0</div>
         </div>
-        <div id="quiz">
-            <div id="question"></div>
-            <div id="choices"></div>
-            <button id="nextBtn" style="display:none;">Next Question</button>
-            <div id="trivia" class="trivia"></div>
-            <div id="score" class="score"></div>
+        <p class="subtitle">Answer 5 quick questions — global leaderboard included.</p>
+
+        <div id="username-container" class="username-row">
+          <input id="username-input" type="text" placeholder="Your name (required)" />
+          <button id="start-quiz-btn" class="btn">Start</button>
         </div>
-        <div id="end" style="display:none;">
-            <h2>Quiz Complete!</h2>
-            <div id="finalScore"></div>
-            <button onclick="restartQuiz()">Restart Quiz</button>
+
+        <div id="quiz" style="display:none" class="question-card">
+          <div class="question" id="question"></div>
+          <div class="choices" id="choices"></div>
+          <p id="trivia" style="opacity:0.9;margin-top:10px"></p>
+          <div style="margin-top:12px;text-align:right">
+            <button id="nextBtn" class="btn" style="display:none">Next</button>
+          </div>
         </div>
+
+        <div id="end" class="end">
+          <h2 id="finalScore"></h2>
+          <div style="display:flex;gap:10px;justify-content:center;margin-top:12px">
+            <button id="show-leaderboard-btn" class="btn">Leaderboard</button>
+            <button id="restart-btn" class="btn" style="background:#9ad3c8">Restart</button>
+          </div>
+        </div>
+      </div>
+
+      <aside>
+        <div class="card-leader">
+          <h3 style="margin-top:0">Leaderboard</h3>
+          <ul id="leaderboard-list" class="leader-list"><li>Loading...</li></ul>
+        </div>
+      </aside>
     </div>
-    <script>
-  // Firebase setup
+  </div>
+
+  <!-- Modal leaderboard (shown on end-screen when requested) -->
+  <div id="leaderboard-modal" style="display:none;position:fixed;inset:0;align-items:center;justify-content:center;z-index:1000">
+    <!-- backdrop to block interaction behind modal -->
+    <div id="leaderboard-backdrop" style="position:absolute;inset:0;background:rgba(0,0,0,0.55);"></div>
+    <div style="position:relative;background:rgba(1,8,20,0.95);backdrop-filter:blur(6px);padding:20px;border-radius:12px;max-width:720px;width:92%;color:var(--muted);box-shadow:0 10px 40px rgba(0,0,0,0.6)">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <h2 style="margin:0">Leaderboard</h2>
+        <div>
+          <button id="modal-play-again" class="btn" style="margin-right:8px">Play again</button>
+          <button id="modal-close" class="btn" style="background:#999">Close</button>
+        </div>
+      </div>
+      <div style="margin-top:12px;max-height:60vh;overflow:auto">
+        <ul id="modal-leaderboard-list" class="leader-list"><li>Loading...</li></ul>
+      </div>
+    </div>
+  </div>
+
+  <canvas id="confetti"></canvas>
+
+  <!-- Firebase v8 -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+  <script>
+  // Firebase init (v8)
   const firebaseConfig = {
     apiKey: "AIzaSyC7MckNS8W0_M69NRrZhSipLDvmTPOVqk8",
     authDomain: "football-quiz-e461f.firebaseapp.com",
     projectId: "football-quiz-e461f",
     storageBucket: "football-quiz-e461f.appspot.com",
     messagingSenderId: "119338076289",
-    appId: "1:119338076289:web:659706f5ea359599d7e580",
+    appId: "119338076289:web:659706f5ea359599d7e580",
     measurementId: "G-QL447LCMFQ"
   };
   firebase.initializeApp(firebaseConfig);
   window.db = firebase.firestore();
 
-  // Quiz code
-  const quizData = [
-    {
-      question: "Which country has won the most FIFA World Cups?",
-      choices: ["Germany", "Brazil", "Italy", "Argentina"],
-      answer: 1,
-      trivia: "Brazil has won the World Cup five times!"
-    },
-    {
-      question: "Who is known as the 'King of Football'?",
-      choices: ["Diego Maradona", "Pelé", "Cristiano Ronaldo", "Lionel Messi"],
-      answer: 1,
-      trivia: "Pelé is often called the 'King of Football'."
-    },
-    {
-      question: "Which club is the oldest football club in the world?",
-      choices: ["Real Madrid", "Sheffield FC", "Manchester United", "Barcelona"],
-      answer: 1,
-      trivia: "Sheffield FC was founded in 1857 and is recognized as the oldest football club."
-    },
-    {
-      question: "Who scored the 'Hand of God' goal?",
-      choices: ["Zinedine Zidane", "Diego Maradona", "David Beckham", "Ronaldinho"],
-      answer: 1,
-      trivia: "Diego Maradona scored the famous 'Hand of God' goal in 1986."
-    },
-    {
-      question: "Which player has won the most Ballon d'Or awards?",
-      choices: ["Cristiano Ronaldo", "Lionel Messi", "Michel Platini", "Johan Cruyff"],
-      answer: 1,
-      trivia: "Lionel Messi has won the Ballon d'Or a record number of times."
-    }
-  ];
+  // state
+  let currentUsername = '';
   let current = 0;
   let score = 0;
   let answered = false;
-  function showQuestion() {
-    const q = quizData[current];
-    document.getElementById('question').textContent = `Q${current+1}: ${q.question}`;
-    const choicesDiv = document.getElementById('choices');
-    choicesDiv.innerHTML = '';
-    document.getElementById('trivia').textContent = '';
-    document.getElementById('nextBtn').style.display = 'none';
-    answered = false;
-    q.choices.forEach((choice, idx) => {
-      const btn = document.createElement('button');
-      btn.textContent = choice;
-      btn.className = 'choiceBtn';
-      btn.onclick = () => selectAnswer(idx);
-      choicesDiv.appendChild(btn);
-    });
-    document.getElementById('score').textContent = `Score: ${score}`;
-  }
-  function selectAnswer(idx) {
-    if (answered) return;
-    answered = true;
-    const q = quizData[current];
-    const choiceBtns = document.querySelectorAll('.choiceBtn');
-    choiceBtns.forEach((btn, i) => {
-      btn.disabled = true;
-      if (i === q.answer) btn.style.background = '#4caf50';
-      else if (i === idx) btn.style.background = '#e74c3c';
-    });
-    if (idx === q.answer) {
-      score++;
-    }
-    document.getElementById('trivia').textContent = q.trivia;
-    document.getElementById('score').textContent = `Score: ${score}`;
-    document.getElementById('nextBtn').style.display = 'inline-block';
-  }
-  document.getElementById('nextBtn').onclick = () => {
-    current++;
-    if (current < quizData.length) {
-      showQuestion();
-    } else {
-      endQuiz();
-    }
-  };
-  function endQuiz() {
-    document.getElementById('quiz').style.display = 'none';
-    document.getElementById('end').style.display = 'block';
-    document.getElementById('finalScore').textContent = `Your final score: ${score} / ${quizData.length}`;
-    launchConfetti();
-  }
-  function restartQuiz() {
-    current = 0;
-    score = 0;
-    document.getElementById('end').style.display = 'none';
-    document.getElementById('quiz').style.display = 'block';
-    showQuestion();
-  }
-  // Confetti animation
-  function launchConfetti() {
-    const canvas = document.getElementById('confetti');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    canvas.style.display = 'block';
-    const ctx = canvas.getContext('2d');
-    const confettiCount = 120;
-    const confetti = [];
-    for (let i = 0; i < confettiCount; i++) {
-      confetti.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height - canvas.height,
-        r: Math.random() * 8 + 4,
-        d: Math.random() * confettiCount,
-        color: `hsl(${Math.random()*360},90%,60%)`,
-        tilt: Math.random() * 10 - 5
+  let currentUserDocId = null;
+
+  const quizData = [
+    { question: 'Which country has won the most FIFA World Cups?', choices: ['Germany','Brazil','Italy','Argentina'], answer:1, trivia:'Brazil has won 5 World Cups.' },
+    { question: "Who is known as the 'King of Football'?", choices:['Diego Maradona','Pelé','Cristiano Ronaldo','Lionel Messi'], answer:1, trivia:'Pelé is often called the King of Football.' },
+    { question: 'Which club is the oldest football club in the world?', choices:['Real Madrid','Sheffield FC','Manchester United','Barcelona'], answer:1, trivia:'Sheffield FC was founded in 1857.' },
+    { question: "Who scored the 'Hand of God' goal?", choices:['Zinedine Zidane','Diego Maradona','David Beckham','Ronaldinho'], answer:1, trivia:'Diego Maradona in 1986.' },
+    { question: "Which player has won the most Ballon d'Or awards?", choices:['Cristiano Ronaldo','Lionel Messi','Michel Platini','Johan Cruyff'], answer:1, trivia:'Lionel Messi has the most.' }
+  ];
+
+  // render leaderboard (date + HH:MM)
+  function showLeaderboard(){
+    const list = document.getElementById('leaderboard-list');
+    if(!list) return;
+    list.innerHTML = '<li>Loading...</li>';
+    if(!window.db){ list.innerHTML = '<li>Firestore not available</li>'; return }
+    // order by score (highest first), then recent timestamp
+    window.db.collection('scores').orderBy('score','desc').orderBy('timestamp','desc').limit(50).get()
+      .then(snap => {
+          list.innerHTML = '';
+          if(snap.empty){ list.innerHTML = '<li>No scores yet.</li>'; return }
+    // Ensure highest scores appear at the top: sort results client-side by numeric score desc
+    const docs = snap.docs.map(d => d.data()).sort((a,b) => (Number(b.score) || 0) - (Number(a.score) || 0));
+    docs.forEach(d => { renderScoreListItem(list, d); });
+        })
+      .catch(err => {
+        console.error('score-order query failed:', err);
+        // show detailed message to help debugging
+        list.innerHTML = `<li style="color:#f88">Error: ${escapeHtml(err.message || String(err))}</li>`;
+        // fallback: try ordering by timestamp only (older behavior)
+        try {
+          window.db.collection('scores').orderBy('timestamp','desc').limit(50).get()
+            .then(snap2 => {
+                if(snap2.empty){ list.innerHTML = '<li>No scores yet.</li>'; return }
+                list.innerHTML = '';
+                const docs2 = snap2.docs.map(d => d.data()).sort((a,b) => (Number(b.score) || 0) - (Number(a.score) || 0));
+                docs2.forEach(d => { renderScoreListItem(list, d); });
+              })
+            .catch(err2 => { console.error('fallback query failed', err2); list.innerHTML = `<li style="color:#f88">Fallback error: ${escapeHtml(err2.message||String(err2))}</li>`; });
+        } catch(fallbackErr) { console.error('fallback exception', fallbackErr); }
       });
-    }
-    let angle = 0;
-    let tiltAngle = 0;
-    function drawConfetti() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      for (let i = 0; i < confettiCount; i++) {
-        let c = confetti[i];
-        ctx.beginPath();
-        ctx.ellipse(c.x, c.y, c.r, c.r/2, c.tilt, 0, 2 * Math.PI);
-        ctx.fillStyle = c.color;
-        ctx.fill();
-      }
-      updateConfetti();
-    }
-    function updateConfetti() {
-      angle += 0.01;
-      tiltAngle += 0.1;
-      for (let i = 0; i < confettiCount; i++) {
-        let c = confetti[i];
-        c.y += (Math.cos(angle + c.d) + 3 + c.r/2) * 0.8;
-        c.x += Math.sin(angle);
-        c.tilt = Math.sin(tiltAngle - (i/3)) * 10;
-        if (c.y > canvas.height) {
-          c.x = Math.random() * canvas.width;
-          c.y = -10;
-        }
-      }
-    }
-    let confettiTimer = setInterval(drawConfetti, 16);
-    setTimeout(() => {
-      clearInterval(confettiTimer);
-      canvas.style.display = 'none';
-    }, 3500);
   }
-  // Start quiz when DOM is ready
-  function startQuizWhenReady() {
-    if (document.readyState === 'complete' || document.readyState === 'interactive') {
-      showQuestion();
-    } else {
-      document.addEventListener('DOMContentLoaded', showQuestion);
+
+  function renderScoreListItem(list, d){
+    const li = document.createElement('li');
+    let time = '';
+    if (d.completedAt) {
+      const dt = new Date(d.completedAt);
+      const yyyy = dt.getFullYear();
+      const mo = String(dt.getMonth()+1).padStart(2,'0');
+      const da = String(dt.getDate()).padStart(2,'0');
+      const hh = String(dt.getHours()).padStart(2,'0');
+      const mi = String(dt.getMinutes()).padStart(2,'0');
+      time = ` ${yyyy}-${mo}-${da} ${hh}:${mi}`;
     }
+    li.innerHTML = `<span>${escapeHtml(d.username)}</span><span>${d.score}<small style="color:rgba(255,255,255,0.45);font-weight:400;margin-left:8px">${time}</small></span>`;
+    list.appendChild(li);
   }
-  startQuizWhenReady();
-</script>
+
+  // show leaderboard only on the start screen (username visible) or when forced
+  function setLeaderboardVisibility(forceShow = false){
+    const lbContainer = document.querySelector('.card-leader');
+    const panel = document.querySelector('.panel');
+    const usernameContainer = document.getElementById('username-container');
+    const endEl = document.getElementById('end');
+    const usernameVisible = usernameContainer && usernameContainer.style.display !== 'none';
+    const endVisible = endEl && endEl.style.display !== 'none';
+    const shouldShow = forceShow || usernameVisible;
+    if(!lbContainer || !panel){ return }
+    if(shouldShow){ lbContainer.style.display = 'block'; panel.classList.remove('no-leader'); showLeaderboard(); }
+    else { lbContainer.style.display = 'none'; panel.classList.add('no-leader'); }
+  }
+
+  // helpers
+  function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;" })[c]); }
+
+  // start
+  document.getElementById('start-quiz-btn').addEventListener('click', ()=>{
+    const input = document.getElementById('username-input'); const name = input.value.trim(); if(!name){ input.style.border='2px solid #ff8a80'; return }
+    currentUsername = name; document.getElementById('username-container').style.display='none'; document.getElementById('quiz').style.display='block';
+    if(window.db){ window.db.collection('scores').add({ username: name, score:0, status:'started', timestamp: Date.now() }).then(r=>{ currentUserDocId = r.id }).catch(e=>console.error(e)) }
+    startQuizWhenReady(); setLeaderboardVisibility(false);
+  });
+
+  document.getElementById('show-leaderboard-btn').addEventListener('click', ()=>{
+    if(window.db && currentUserDocId){ window.db.collection('scores').doc(currentUserDocId).set({ username: currentUsername, score, status:'completed', completedAt: new Date().toISOString(), timestamp: Date.now() }, { merge:true }).catch(e=>console.error(e)) }
+    document.getElementById('end').style.display='none'; setLeaderboardVisibility(true); window.scrollTo({top:0,behavior:'smooth'});
+  });
+
+  document.getElementById('restart-btn').addEventListener('click', ()=>{
+    current=0; score=0; answered=false; document.getElementById('end').style.display='none'; document.getElementById('quiz').style.display='none'; document.getElementById('username-container').style.display='flex'; document.getElementById('username-input').value=''; document.getElementById('score').textContent='Score: 0'; setLeaderboardVisibility();
+  });
+
+  // quiz flow
+  function showQuestion(){
+    const q = quizData[current];
+    const qEl = document.getElementById('question');
+    const choicesDiv = document.getElementById('choices'); choicesDiv.innerHTML=''; document.getElementById('trivia').textContent=''; document.getElementById('nextBtn').style.display='none'; answered=false;
+    qEl.textContent = `Q${current+1}: ${q.question}`;
+    q.choices.forEach((c,i)=>{
+      const btn = document.createElement('div'); btn.className='choice'; btn.textContent = c; btn.onclick = ()=> selectAnswer(i); choicesDiv.appendChild(btn);
+    });
+    document.getElementById('score').textContent = `Score: ${score}`;
+  }
+
+  function selectAnswer(idx){ if(answered) return; answered=true; const q = quizData[current]; const buttons = document.querySelectorAll('.choice'); buttons.forEach((b,i)=>{ b.style.pointerEvents='none'; if(i===q.answer) b.style.background='linear-gradient(90deg,#2ecc71,#27ae60)'; else if(i===idx) b.style.background='linear-gradient(90deg,#ff6b6b,#e74c3c)'; }); if(idx===q.answer) score++; document.getElementById('trivia').textContent = q.trivia; document.getElementById('score').textContent = `Score: ${score}`; document.getElementById('nextBtn').style.display='inline-block'; if(window.db && currentUserDocId){ window.db.collection('scores').doc(currentUserDocId).set({ username: currentUsername, score, status: (current < quizData.length-1)?'in-progress':'completed', lastQuestion: current, timestamp: Date.now() }, { merge:true }).catch(e=>console.error(e)) } }
+
+  document.getElementById('nextBtn').addEventListener('click', ()=>{ current++; if(current < quizData.length) showQuestion(); else endQuiz() });
+
+  function endQuiz(){ document.getElementById('quiz').style.display='none'; document.getElementById('end').style.display='block'; document.getElementById('finalScore').textContent = `Your final score: ${score} / ${quizData.length}`; launchConfetti(); }
+
+  function startQuizWhenReady(){ showQuestion(); document.getElementById('card-quiz').scrollIntoView({behavior:'smooth'}); }
+
+  // confetti - canvas particles
+  function launchConfetti(){ const canvas = document.getElementById('confetti'); canvas.width = window.innerWidth; canvas.height = window.innerHeight; canvas.style.display='block'; const ctx = canvas.getContext('2d'); const pieces=[]; for(let i=0;i<120;i++){ pieces.push({x:Math.random()*canvas.width,y:Math.random()*-canvas.height*0.5, r:Math.random()*6+4, c:`hsl(${Math.random()*360},90%,60%)`, vx:(Math.random()-0.5)*4, vy:Math.random()*4+2, rot:Math.random()*360}); } let t=0; const id=setInterval(()=>{ ctx.clearRect(0,0,canvas.width,canvas.height); pieces.forEach(p=>{ p.x += p.vx; p.y += p.vy; p.rot += 6; ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot*Math.PI/180); ctx.fillStyle=p.c; ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r); ctx.restore(); if(p.y>canvas.height+50){ p.y = -50; p.x = Math.random()*canvas.width; } }); },16); setTimeout(()=>{ clearInterval(id); canvas.style.display='none'; },3500); }
+
+  // util
+  function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;" })[c]); }
+
+  window.addEventListener('DOMContentLoaded', ()=>{ setLeaderboardVisibility(); });
+
+  // Modal leaderboard helpers (minimal wiring)
+  const modal = document.getElementById('leaderboard-modal');
+  const modalList = document.getElementById('modal-leaderboard-list');
+  function openModalLeaderboard(){ if(!modal) return; modal.style.display = 'flex'; modalList.innerHTML = '<li>Loading...</li>'; // reuse showLeaderboard logic but render into modal list
+    if(!window.db){ modalList.innerHTML = '<li>Firestore not available</li>'; return }
+    window.db.collection('scores').orderBy('score','desc').orderBy('timestamp','desc').limit(100).get()
+      .then(snap=>{
+        modalList.innerHTML = '';
+        if(snap.empty){ modalList.innerHTML = '<li>No scores yet.</li>'; return }
+        const docs = snap.docs.map(d=>d.data()).sort((a,b)=> (Number(b.score)||0)-(Number(a.score)||0));
+        docs.forEach(d=>{ renderScoreListItem(modalList,d); });
+      })
+      .catch(err=>{
+        console.error('modal score-order query failed', err);
+        modalList.innerHTML = `<li style="color:#f88">Error: ${escapeHtml(err.message||String(err))}</li>`;
+        // fallback
+        window.db.collection('scores').orderBy('timestamp','desc').limit(100).get().then(snap2=>{ if(snap2.empty){ modalList.innerHTML = '<li>No scores yet.</li>'; return } modalList.innerHTML=''; const docs2 = snap2.docs.map(d=>d.data()).sort((a,b)=> (Number(b.score)||0)-(Number(a.score)||0)); docs2.forEach(d=>{ renderScoreListItem(modalList,d); }); }).catch(e=>{ console.error('modal fallback failed',e); });
+      });
+  }
+
+  document.getElementById('show-leaderboard-btn').addEventListener('click', ()=>{
+    if(window.db && currentUserDocId){ window.db.collection('scores').doc(currentUserDocId).set({ username: currentUsername, score, status:'completed', completedAt: new Date().toISOString(), timestamp: Date.now() }, { merge:true }).catch(e=>console.error(e)) }
+    // open modal instead of navigating back to start page
+    openModalLeaderboard();
+  });
+
+  document.getElementById('modal-close').addEventListener('click', ()=>{ if(modal){ modal.style.display='none'; document.body.style.overflow=''; } });
+  document.getElementById('modal-play-again').addEventListener('click', ()=>{
+    // close modal and restart quiz immediately
+    if(modal){ modal.style.display='none'; document.body.style.overflow=''; }
+    // reset quiz state but keep username and do not show username input
+    current=0; score=0; answered=false; document.getElementById('score').textContent = `Score: ${score}`; document.getElementById('end').style.display='none'; document.getElementById('quiz').style.display='block'; startQuizWhenReady();
+  });
+
+  // ensure page is non-scrollable and background disabled when modal opens
+  const originalBodyOverflow = document.body.style.overflow || '';
+  function disablePageInteraction(){ document.body.style.overflow = 'hidden'; }
+  function enablePageInteraction(){ document.body.style.overflow = originalBodyOverflow; }
+  // update openModalLeaderboard to disable interaction
+  const _openModalLeaderboard = openModalLeaderboard;
+  openModalLeaderboard = function(){ disablePageInteraction(); _openModalLeaderboard(); };
+
+  </script>
 </body>
 </html>
