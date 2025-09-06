@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Facts</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: rgba(0,0,0,0.6);
+            padding: 2rem 3rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        button {
+            background: #ffcc00;
+            color: #1e3c72;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 1.5rem;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: #ffe066;
+        }
+        h1 {
+            margin-bottom: 1rem;
+        }
+        .fact {
+            font-size: 1.2rem;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Football Facts</h1>
+        <div class="fact" id="fact">Click the button to see a cool football fact!</div>
+        <button onclick="showFact()">Show Me a Fact</button>
+    </div>
+    <script>
+        const facts = [
+            "The fastest goal in football history was scored just 2.4 seconds after kickoff.",
+            "The FIFA World Cup is the most watched sporting event in the world.",
+            "Cristiano Ronaldo is the first player to score in five different World Cups.",
+            "The largest football stadium is Rungrado 1st of May Stadium in North Korea.",
+            "The first official international football match was played in 1872 between Scotland and England.",
+            "Lionel Messi has won the Ballon d'Or a record number of times.",
+            "The Premier League was founded in 1992.",
+            "Brazil has won the World Cup five times, more than any other country.",
+            "The most goals scored by one player in a single World Cup match is 5, by Oleg Salenko in 1994.",
+            "The oldest football club in the world is Sheffield FC, founded in 1857."
+        ];
+        function showFact() {
+            const fact = facts[Math.floor(Math.random() * facts.length)];
+            document.getElementById('fact').textContent = fact;
+        }
+    </script>
+</body>
+</html>
