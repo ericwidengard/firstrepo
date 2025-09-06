@@ -11,7 +11,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         super().__init__(*args, directory=DIRECTORY, **kwargs)
 
 def open_browser():
-    webbrowser.open(f"http://localhost:{PORT}/football_facts.html")
+    webbrowser.open(f"http://localhost:{PORT}/index.html")
 
 if __name__ == "__main__":
     threading.Timer(1.5, open_browser).start()
