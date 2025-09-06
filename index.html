@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
     <!-- Firebase App (core) -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <!-- Firestore (for leaderboard) -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Football Quiz</title>
@@ -206,165 +206,171 @@
         </div>
     </div>
     <script>
-        // Your Firebase config
-        const firebaseConfig = {
-          apiKey: "AIzaSyC7MckNS8W0_M69NRrZhSipLDvmTPOVqk8",
-          authDomain: "football-quiz-e461f.firebaseapp.com",
-          projectId: "football-quiz-e461f",
-          storageBucket: "football-quiz-e461f.appspot.com",
-          messagingSenderId: "119338076289",
-          appId: "1:119338076289:web:659706f5ea359599d7e580",
-          measurementId: "G-QL447LCMFQ"
-        };
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        window.db = firebase.firestore(); // Make db globally accessible
-    </script>
-    <script>
-        const quizData = [
-            {
-                question: "Which country has won the most FIFA World Cups?",
-                choices: ["Germany", "Brazil", "Italy", "Argentina"],
-                answer: 1,
-                trivia: "Brazil has won the World Cup five times!"
-            },
-            {
-                question: "Who is known as the 'King of Football'?",
-                choices: ["Diego Maradona", "Pelé", "Cristiano Ronaldo", "Lionel Messi"],
-                answer: 1,
-                trivia: "Pelé is often called the 'King of Football'."
-            },
-            {
-                question: "Which club is the oldest football club in the world?",
-                choices: ["Real Madrid", "Sheffield FC", "Manchester United", "Barcelona"],
-                answer: 1,
-                trivia: "Sheffield FC was founded in 1857 and is recognized as the oldest football club."
-            },
-            {
-                question: "Who scored the 'Hand of God' goal?",
-                choices: ["Zinedine Zidane", "Diego Maradona", "David Beckham", "Ronaldinho"],
-                answer: 1,
-                trivia: "Diego Maradona scored the famous 'Hand of God' goal in 1986."
-            },
-            {
-                question: "Which player has won the most Ballon d'Or awards?",
-                choices: ["Cristiano Ronaldo", "Lionel Messi", "Michel Platini", "Johan Cruyff"],
-                answer: 1,
-                trivia: "Lionel Messi has won the Ballon d'Or a record number of times."
-            }
-        ];
-        let current = 0;
-        let score = 0;
-        let answered = false;
-        function showQuestion() {
-            const q = quizData[current];
-            document.getElementById('question').textContent = `Q${current+1}: ${q.question}`;
-            const choicesDiv = document.getElementById('choices');
-            choicesDiv.innerHTML = '';
-            document.getElementById('trivia').textContent = '';
-            document.getElementById('nextBtn').style.display = 'none';
-            answered = false;
-            q.choices.forEach((choice, idx) => {
-                const btn = document.createElement('button');
-                btn.textContent = choice;
-                btn.className = 'choiceBtn';
-                btn.onclick = () => selectAnswer(idx);
-                choicesDiv.appendChild(btn);
-            });
-            document.getElementById('score').textContent = `Score: ${score}`;
+  // Firebase setup
+  const firebaseConfig = {
+    apiKey: "AIzaSyC7MckNS8W0_M69NRrZhSipLDvmTPOVqk8",
+    authDomain: "football-quiz-e461f.firebaseapp.com",
+    projectId: "football-quiz-e461f",
+    storageBucket: "football-quiz-e461f.appspot.com",
+    messagingSenderId: "119338076289",
+    appId: "1:119338076289:web:659706f5ea359599d7e580",
+    measurementId: "G-QL447LCMFQ"
+  };
+  firebase.initializeApp(firebaseConfig);
+  window.db = firebase.firestore();
+
+  // Quiz code
+  const quizData = [
+    {
+      question: "Which country has won the most FIFA World Cups?",
+      choices: ["Germany", "Brazil", "Italy", "Argentina"],
+      answer: 1,
+      trivia: "Brazil has won the World Cup five times!"
+    },
+    {
+      question: "Who is known as the 'King of Football'?",
+      choices: ["Diego Maradona", "Pelé", "Cristiano Ronaldo", "Lionel Messi"],
+      answer: 1,
+      trivia: "Pelé is often called the 'King of Football'."
+    },
+    {
+      question: "Which club is the oldest football club in the world?",
+      choices: ["Real Madrid", "Sheffield FC", "Manchester United", "Barcelona"],
+      answer: 1,
+      trivia: "Sheffield FC was founded in 1857 and is recognized as the oldest football club."
+    },
+    {
+      question: "Who scored the 'Hand of God' goal?",
+      choices: ["Zinedine Zidane", "Diego Maradona", "David Beckham", "Ronaldinho"],
+      answer: 1,
+      trivia: "Diego Maradona scored the famous 'Hand of God' goal in 1986."
+    },
+    {
+      question: "Which player has won the most Ballon d'Or awards?",
+      choices: ["Cristiano Ronaldo", "Lionel Messi", "Michel Platini", "Johan Cruyff"],
+      answer: 1,
+      trivia: "Lionel Messi has won the Ballon d'Or a record number of times."
+    }
+  ];
+  let current = 0;
+  let score = 0;
+  let answered = false;
+  function showQuestion() {
+    const q = quizData[current];
+    document.getElementById('question').textContent = `Q${current+1}: ${q.question}`;
+    const choicesDiv = document.getElementById('choices');
+    choicesDiv.innerHTML = '';
+    document.getElementById('trivia').textContent = '';
+    document.getElementById('nextBtn').style.display = 'none';
+    answered = false;
+    q.choices.forEach((choice, idx) => {
+      const btn = document.createElement('button');
+      btn.textContent = choice;
+      btn.className = 'choiceBtn';
+      btn.onclick = () => selectAnswer(idx);
+      choicesDiv.appendChild(btn);
+    });
+    document.getElementById('score').textContent = `Score: ${score}`;
+  }
+  function selectAnswer(idx) {
+    if (answered) return;
+    answered = true;
+    const q = quizData[current];
+    const choiceBtns = document.querySelectorAll('.choiceBtn');
+    choiceBtns.forEach((btn, i) => {
+      btn.disabled = true;
+      if (i === q.answer) btn.style.background = '#4caf50';
+      else if (i === idx) btn.style.background = '#e74c3c';
+    });
+    if (idx === q.answer) {
+      score++;
+    }
+    document.getElementById('trivia').textContent = q.trivia;
+    document.getElementById('score').textContent = `Score: ${score}`;
+    document.getElementById('nextBtn').style.display = 'inline-block';
+  }
+  document.getElementById('nextBtn').onclick = () => {
+    current++;
+    if (current < quizData.length) {
+      showQuestion();
+    } else {
+      endQuiz();
+    }
+  };
+  function endQuiz() {
+    document.getElementById('quiz').style.display = 'none';
+    document.getElementById('end').style.display = 'block';
+    document.getElementById('finalScore').textContent = `Your final score: ${score} / ${quizData.length}`;
+    launchConfetti();
+  }
+  function restartQuiz() {
+    current = 0;
+    score = 0;
+    document.getElementById('end').style.display = 'none';
+    document.getElementById('quiz').style.display = 'block';
+    showQuestion();
+  }
+  // Confetti animation
+  function launchConfetti() {
+    const canvas = document.getElementById('confetti');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    canvas.style.display = 'block';
+    const ctx = canvas.getContext('2d');
+    const confettiCount = 120;
+    const confetti = [];
+    for (let i = 0; i < confettiCount; i++) {
+      confetti.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height - canvas.height,
+        r: Math.random() * 8 + 4,
+        d: Math.random() * confettiCount,
+        color: `hsl(${Math.random()*360},90%,60%)`,
+        tilt: Math.random() * 10 - 5
+      });
+    }
+    let angle = 0;
+    let tiltAngle = 0;
+    function drawConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = 0; i < confettiCount; i++) {
+        let c = confetti[i];
+        ctx.beginPath();
+        ctx.ellipse(c.x, c.y, c.r, c.r/2, c.tilt, 0, 2 * Math.PI);
+        ctx.fillStyle = c.color;
+        ctx.fill();
+      }
+      updateConfetti();
+    }
+    function updateConfetti() {
+      angle += 0.01;
+      tiltAngle += 0.1;
+      for (let i = 0; i < confettiCount; i++) {
+        let c = confetti[i];
+        c.y += (Math.cos(angle + c.d) + 3 + c.r/2) * 0.8;
+        c.x += Math.sin(angle);
+        c.tilt = Math.sin(tiltAngle - (i/3)) * 10;
+        if (c.y > canvas.height) {
+          c.x = Math.random() * canvas.width;
+          c.y = -10;
         }
-        function selectAnswer(idx) {
-            if (answered) return;
-            answered = true;
-            const q = quizData[current];
-            const choiceBtns = document.querySelectorAll('.choiceBtn');
-            choiceBtns.forEach((btn, i) => {
-                btn.disabled = true;
-                if (i === q.answer) btn.style.background = '#4caf50';
-                else if (i === idx) btn.style.background = '#e74c3c';
-            });
-            if (idx === q.answer) {
-                score++;
-            }
-            document.getElementById('trivia').textContent = q.trivia;
-            document.getElementById('score').textContent = `Score: ${score}`;
-            document.getElementById('nextBtn').style.display = 'inline-block';
-        }
-        document.getElementById('nextBtn').onclick = () => {
-            current++;
-            if (current < quizData.length) {
-                showQuestion();
-            } else {
-                endQuiz();
-            }
-        };
-        function endQuiz() {
-            document.getElementById('quiz').style.display = 'none';
-            document.getElementById('end').style.display = 'block';
-            document.getElementById('finalScore').textContent = `Your final score: ${score} / ${quizData.length}`;
-            launchConfetti();
-        }
-        function restartQuiz() {
-            current = 0;
-            score = 0;
-            document.getElementById('end').style.display = 'none';
-            document.getElementById('quiz').style.display = 'block';
-            showQuestion();
-        }
-        // Confetti animation
-        function launchConfetti() {
-            const canvas = document.getElementById('confetti');
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            canvas.style.display = 'block';
-            const ctx = canvas.getContext('2d');
-            const confettiCount = 120;
-            const confetti = [];
-            for (let i = 0; i < confettiCount; i++) {
-                confetti.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height - canvas.height,
-                    r: Math.random() * 8 + 4,
-                    d: Math.random() * confettiCount,
-                    color: `hsl(${Math.random()*360},90%,60%)`,
-                    tilt: Math.random() * 10 - 5
-                });
-            }
-            let angle = 0;
-            let tiltAngle = 0;
-            function drawConfetti() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                for (let i = 0; i < confettiCount; i++) {
-                    let c = confetti[i];
-                    ctx.beginPath();
-                    ctx.ellipse(c.x, c.y, c.r, c.r/2, c.tilt, 0, 2 * Math.PI);
-                    ctx.fillStyle = c.color;
-                    ctx.fill();
-                }
-                updateConfetti();
-            }
-            function updateConfetti() {
-                angle += 0.01;
-                tiltAngle += 0.1;
-                for (let i = 0; i < confettiCount; i++) {
-                    let c = confetti[i];
-                    c.y += (Math.cos(angle + c.d) + 3 + c.r/2) * 0.8;
-                    c.x += Math.sin(angle);
-                    c.tilt = Math.sin(tiltAngle - (i/3)) * 10;
-                    if (c.y > canvas.height) {
-                        c.x = Math.random() * canvas.width;
-                        c.y = -10;
-                    }
-                }
-            }
-            let confettiTimer = setInterval(drawConfetti, 16);
-            setTimeout(() => {
-                clearInterval(confettiTimer);
-                canvas.style.display = 'none';
-            }, 3500);
-        }
-        // Start quiz on page load
-        showQuestion();
-    </script>
+      }
+    }
+    let confettiTimer = setInterval(drawConfetti, 16);
+    setTimeout(() => {
+      clearInterval(confettiTimer);
+      canvas.style.display = 'none';
+    }, 3500);
+  }
+  // Start quiz when DOM is ready
+  function startQuizWhenReady() {
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      showQuestion();
+    } else {
+      document.addEventListener('DOMContentLoaded', showQuestion);
+    }
+  }
+  startQuizWhenReady();
+</script>
 </body>
 </html>
